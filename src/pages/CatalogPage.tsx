@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { AppHeader } from '../components/AppHeader';
 import { FilterPanel } from '../components/FilterPanel';
 import { VehicleGrid } from '../components/VehicleGrid';
-import { AddVehicleModal } from '../components/AddVehicleModal';
+import { AddVehicleModal } from '../components/Veiculo-formulario';
 import { useVehicles } from '../hooks/useVehicles';
 import { useVehicleFilters } from '../hooks/useVehicleFilters';
 import { getBrandOptions, getYearOptions } from '../utils/vehicleOptions';
@@ -12,25 +12,43 @@ export function CatalogPage() {
   const { vehicles, loading, error, addVehicle } = useVehicles();
   const { filters, filteredVehicles, updateFilter, clearFilters } = useVehicleFilters(vehicles);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isFilterOpen, setFilterOpen] = useState(false);
 
   const brands = useMemo(() => getBrandOptions(vehicles), [vehicles]);
   const years = useMemo(() => getYearOptions(vehicles), [vehicles]);
 
   return (
     <main className="catalog-page">
-      <div className="catalog-container">
-        <AppHeader total={vehicles.length} filtered={filteredVehicles.length} onAdd={() => setModalOpen(true)} />
+      <div className="catalog-layout">
+        
+        <aside className={`sidebar-wrapper ${isFilterOpen ? 'open' : 'closed'}`}>
+          <div className="sidebar-inner">
+            <FilterPanel
+              filters={filters}
+              brands={brands}
+              years={years}
+              onChange={updateFilter}
+              onClear={clearFilters}
+            />
+          </div>
+        </aside>
 
-        <FilterPanel
-          filters={filters}
-          brands={brands}
-          years={years}
-          onChange={updateFilter}
-          onClear={clearFilters}
-        />
+        <div className="catalog-content">
+          <div className="layout-controls">
+            <button className="btn btn-ghost toggle-btn" onClick={() => setFilterOpen(!isFilterOpen)}>
+              {isFilterOpen ? '← Ocultar Filtros' : '→ Mostrar Filtros'}
+            </button>
+          </div>
 
-        {error && <p className="feedback feedback-error">{error}</p>}
-        {loading ? <p className="feedback">Carregando catalogo...</p> : <VehicleGrid vehicles={filteredVehicles} />}
+          <AppHeader 
+            total={vehicles.length} 
+            filtered={filteredVehicles.length} 
+            onAdd={() => setModalOpen(true)} 
+          />
+
+          {error && <p className="feedback feedback-error">{error}</p>}
+          {loading ? <p className="feedback">Carregando catálogo...</p> : <VehicleGrid vehicles={filteredVehicles} />}
+        </div>
       </div>
 
       <AddVehicleModal open={isModalOpen} onClose={() => setModalOpen(false)} onSubmit={addVehicle} />

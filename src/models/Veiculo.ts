@@ -1,5 +1,7 @@
 import type { VehicleDTO } from '../types/vehicle';
 
+// PONTO DE APRESENTAÇÃO: Aqui demonstramos a criação de uma CLASSE e de uma CLASSE ABSTRATA.
+// Ela serve de molde (com atributos e métodos) para outras classes, mas não pode ser instanciada diretamente.
 export abstract class Veiculo {
   protected readonly data: VehicleDTO;
 
@@ -63,6 +65,7 @@ export abstract class Veiculo {
     return this.data.cambio;
   }
 
+  // PONTO DE APRESENTAÇÃO: Exemplo de um MÉTODO comum que será herdado por todas as classes filhas.
   getNomeCompleto(): string {
     return `${this.marca} ${this.modelo}`;
   }
@@ -71,6 +74,8 @@ export abstract class Veiculo {
     return `${this.marca} ${this.modelo}`.toLowerCase();
   }
 
+  // PONTO DE APRESENTAÇÃO: Aqui temos um MÉTODO ABSTRATO.
+  // Ele obriga que qualquer classe que herde de Veiculo (filha) implemente sua própria versão (comportamento) deste método.
   abstract getDescricaoDiferencial(): string;
 
   abstract getBadgeTipo(): string;

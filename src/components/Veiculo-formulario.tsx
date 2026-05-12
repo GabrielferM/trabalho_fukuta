@@ -18,6 +18,8 @@ type FormValues = {
   autonomiaKm: string;
   bateriaKwh: string;
   tempoRecargaHoras: string;
+  capacidadeCargaToneladas: string;
+  eixos: string;
   combustivel: FuelType;
   tipo: VehicleType;
   cambio: TransmissionType;
@@ -34,6 +36,8 @@ const initialValues: FormValues = {
   autonomiaKm: '',
   bateriaKwh: '',
   tempoRecargaHoras: '',
+  capacidadeCargaToneladas: '',
+  eixos: '',
   combustivel: 'flex',
   tipo: 'carro',
   cambio: 'manual'
@@ -60,11 +64,15 @@ export function AddVehicleModal({ open, onClose, onSubmit }: AddVehicleModalProp
       return false;
     }
 
-    if (!isElectricType) {
-      return true;
+    if (isElectricType) {
+      return Number(values.bateriaKwh) > 0 && Number(values.tempoRecargaHoras) > 0;
     }
 
-    return Number(values.bateriaKwh) > 0 && Number(values.tempoRecargaHoras) > 0;
+    if (values.tipo === 'caminhao') {
+      return Number(values.capacidadeCargaToneladas) > 0 && Number(values.eixos) > 0;
+    }
+
+    return true;
   }, [values, isElectricType]);
 
   if (!open) {
@@ -108,6 +116,8 @@ export function AddVehicleModal({ open, onClose, onSubmit }: AddVehicleModalProp
       autonomiaKm: Number(values.autonomiaKm),
       bateriaKwh: isElectricType ? Number(values.bateriaKwh) : undefined,
       tempoRecargaHoras: isElectricType ? Number(values.tempoRecargaHoras) : undefined,
+      capacidadeCargaToneladas: values.tipo === 'caminhao' ? Number(values.capacidadeCargaToneladas) : undefined,
+      eixos: values.tipo === 'caminhao' ? Number(values.eixos) : undefined,
       combustivel: isElectricType ? 'eletrico' : values.combustivel,
       tipo: values.tipo,
       cambio: values.cambio
@@ -126,7 +136,7 @@ export function AddVehicleModal({ open, onClose, onSubmit }: AddVehicleModalProp
     <div className="modal-backdrop" role="dialog" aria-modal="true">
       <div className="modal">
         <div className="modal-header">
-          <h2>Adicionar veiculo</h2>
+          <h2>Adicionar veículo</h2>
           <button type="button" className="btn btn-ghost" onClick={onClose}>
             Fechar
           </button>
@@ -188,7 +198,7 @@ export function AddVehicleModal({ open, onClose, onSubmit }: AddVehicleModalProp
           </label>
 
           <label>
-            Preco
+            Preço
             <input
               type="number"
               min={1}
@@ -199,7 +209,7 @@ export function AddVehicleModal({ open, onClose, onSubmit }: AddVehicleModalProp
           </label>
 
           <label>
-            Potencia (cv)
+            Potência (cv)
             <input
               type="number"
               min={1}
@@ -247,18 +257,44 @@ export function AddVehicleModal({ open, onClose, onSubmit }: AddVehicleModalProp
             </>
           )}
 
+          {values.tipo === 'caminhao' && (
+            <>
+              <label>
+                Capacidade de Carga (Toneladas)
+                <input
+                  type="number"
+                  min={1}
+                  required
+                  value={values.capacidadeCargaToneladas}
+                  onChange={(event) => updateField('capacidadeCargaToneladas', event.target.value)}
+                />
+              </label>
+
+              <label>
+                Número de Eixos
+                <input
+                  type="number"
+                  min={2}
+                  required
+                  value={values.eixos}
+                  onChange={(event) => updateField('eixos', event.target.value)}
+                />
+              </label>
+            </>
+          )}
+
           <label>
             Tipo
             <select value={values.tipo} onChange={(event) => updateField('tipo', event.target.value as VehicleType)}>
               <option value="carro">Carro</option>
               <option value="moto">Moto</option>
-              <option value="caminhonete">Caminhonete</option>
-              <option value="eletrico">Eletrico</option>
+              <option value="caminhao">Caminhão</option>
+              <option value="eletrico">Elétrico</option>
             </select>
           </label>
 
           <label>
-            Combustivel
+            Combustível
             <select
               value={values.combustivel}
               disabled={isElectricType}
@@ -267,25 +303,24 @@ export function AddVehicleModal({ open, onClose, onSubmit }: AddVehicleModalProp
               <option value="flex">Flex</option>
               <option value="gasolina">Gasolina</option>
               <option value="diesel">Diesel</option>
-              <option value="eletrico">Eletrico</option>
-              <option value="hibrido">Hibrido</option>
+              <option value="eletrico">Elétrico</option>
             </select>
           </label>
 
           <label>
-            Cambio
+            Câmbio
             <select
               value={values.cambio}
               onChange={(event) => updateField('cambio', event.target.value as TransmissionType)}
             >
               <option value="manual">Manual</option>
-              <option value="automatico">Automatico</option>
+              <option value="automatico">Automático</option>
               <option value="cvt">CVT</option>
             </select>
           </label>
 
           <button type="submit" className="btn btn-primary" disabled={!isFormValid || submitting}>
-            {submitting ? 'Salvando...' : 'Salvar veiculo'}
+            {submitting ? 'Salvando...' : 'Salvar veículo'}
           </button>
         </form>
       </div>

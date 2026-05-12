@@ -1,4 +1,4 @@
-export type VehicleType = 'carro' | 'moto' | 'caminhonete' | 'eletrico';
+export type VehicleType = 'carro' | 'moto' | 'caminhao' | 'eletrico';
 
 export type FuelType = 'flex' | 'gasolina' | 'diesel' | 'eletrico' | 'hibrido';
 
@@ -16,6 +16,8 @@ export interface VehicleDTO {
   autonomiaKm: number;
   bateriaKwh?: number;
   tempoRecargaHoras?: number;
+  capacidadeCargaToneladas?: number;
+  eixos?: number;
   combustivel: FuelType;
   tipo: VehicleType;
   cambio: TransmissionType;

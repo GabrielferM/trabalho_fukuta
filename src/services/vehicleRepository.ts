@@ -1,5 +1,9 @@
 import type { NewVehicleInput, VehicleDTO } from '../types/vehicle';
-import { createVehicleInstance } from '../models/vehicleFactory';
+import { Veiculo } from '../models/Veiculo';
+import { Carro } from '../models/Carro';
+import { Moto } from '../models/Moto';
+import { Caminhao } from '../models/Caminhao';
+import { Eletrico } from '../models/Eletrico';
 import { vehiclesSeed } from '../data/vehiclesSeed';
 
 const STORAGE_KEY = 'trabalho_fukuta_vehicles_v2';
@@ -35,7 +39,7 @@ class VehicleRepository {
     const map: Record<VehicleDTO['tipo'], number> = {
       carro: 120,
       moto: 40,
-      caminhonete: 190,
+      caminhao: 350,
       eletrico: 160
     };
     return map[tipo];
@@ -45,7 +49,7 @@ class VehicleRepository {
     const map: Record<VehicleDTO['tipo'], number> = {
       carro: 650,
       moto: 320,
-      caminhonete: 900,
+      caminhao: 1200,
       eletrico: 320
     };
     return map[tipo];
@@ -57,7 +61,7 @@ class VehicleRepository {
     }
 
     const candidate = item as Partial<VehicleDTO>;
-    const allowedTypes: VehicleDTO['tipo'][] = ['carro', 'moto', 'caminhonete', 'eletrico'];
+    const allowedTypes: VehicleDTO['tipo'][] = ['carro', 'moto', 'caminhao', 'eletrico'];
     const allowedFuels: VehicleDTO['combustivel'][] = ['flex', 'gasolina', 'diesel', 'eletrico', 'hibrido'];
     const allowedTransmissions: VehicleDTO['cambio'][] = ['manual', 'automatico', 'cvt'];
 
@@ -102,6 +106,8 @@ class VehicleRepository {
       bateriaKwh: typeof candidate.bateriaKwh === 'number' ? candidate.bateriaKwh : undefined,
       tempoRecargaHoras:
         typeof candidate.tempoRecargaHoras === 'number' ? candidate.tempoRecargaHoras : undefined,
+      capacidadeCargaToneladas: typeof candidate.capacidadeCargaToneladas === 'number' ? candidate.capacidadeCargaToneladas : undefined,
+      eixos: typeof candidate.eixos === 'number' ? candidate.eixos : undefined,
       combustivel,
       tipo,
       cambio
@@ -148,10 +154,27 @@ class VehicleRepository {
     this.writeStorage(existing, STORAGE_KEY);
   }
 
+  private createInstance(data: VehicleDTO): Veiculo {
+    switch (data.tipo) {
+      case 'carro':
+        // PONTO DE APRESENTAÇÃO: Aqui demonstramos a INSTANCIAÇÃO DE OBJETOS usando a palavra reservada 'new'.
+        // Estamos criando um OBJETO real em memória a partir da nossa classe 'Carro'.
+        return new Carro(data);
+      case 'moto':
+        return new Moto(data);
+      case 'caminhao':
+        return new Caminhao(data);
+      case 'eletrico':
+        return new Eletrico(data);
+      default:
+        return new Carro(data);
+    }
+  }
+
   async list() {
     this.ensureSeedData();
     await wait(140);
-    return this.readStorage().map(createVehicleInstance);
+    return this.readStorage().map(item => this.createInstance(item));
   }
 
   async add(input: NewVehicleInput) {
@@ -168,7 +191,7 @@ class VehicleRepository {
     this.notify();
     await wait(140);
 
-    return createVehicleInstance(created);
+    return this.createInstance(created);
   }
 
   subscribe(listener: () => void): () => void {

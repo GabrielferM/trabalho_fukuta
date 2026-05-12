@@ -10,20 +10,20 @@ interface FilterPanelProps {
 }
 
 const fuelOptions: FuelType[] = ['flex', 'gasolina', 'diesel', 'eletrico', 'hibrido'];
-const typeOptions: VehicleType[] = ['carro', 'moto', 'caminhonete', 'eletrico'];
+const typeOptions: VehicleType[] = ['carro', 'moto', 'caminhao', 'eletrico'];
 const transmissionOptions: TransmissionType[] = ['manual', 'automatico', 'cvt'];
 
 export function FilterPanel({ filters, brands, years, onChange, onClear }: FilterPanelProps) {
   return (
     <section className="panel">
       <div className="panel-header">
-        <h2>Filtros avancados</h2>
+        <h2>Filtros avançados</h2>
         <button className="btn btn-ghost" type="button" onClick={onClear}>
           Limpar filtros
         </button>
       </div>
 
-      <div className="filter-grid">
+      <div className="sidebar-grid">
         <label>
           Buscar nome/modelo
           <input
@@ -47,7 +47,7 @@ export function FilterPanel({ filters, brands, years, onChange, onClear }: Filte
         </label>
 
         <label>
-          Preco minimo
+          Preço mínimo
           <input
             type="number"
             min={0}
@@ -58,7 +58,7 @@ export function FilterPanel({ filters, brands, years, onChange, onClear }: Filte
         </label>
 
         <label>
-          Preco maximo
+          Preço máximo
           <input
             type="number"
             min={0}
@@ -93,7 +93,7 @@ export function FilterPanel({ filters, brands, years, onChange, onClear }: Filte
         </label>
 
         <label>
-          Combustivel
+          Combustível
           <select value={filters.fuel} onChange={(event) => onChange('fuel', event.target.value as FuelType | '')}>
             <option value="">Todos</option>
             {fuelOptions.map((fuel) => (
@@ -105,7 +105,7 @@ export function FilterPanel({ filters, brands, years, onChange, onClear }: Filte
         </label>
 
         <label>
-          Cambio
+          Câmbio
           <select
             value={filters.transmission}
             onChange={(event) => onChange('transmission', event.target.value as TransmissionType | '')}
@@ -120,16 +120,20 @@ export function FilterPanel({ filters, brands, years, onChange, onClear }: Filte
         </label>
 
         <label>
-          Ordenar por preco
+          Ordenar por preço
           <select
             value={filters.sortPrice}
             onChange={(event) => onChange('sortPrice', event.target.value as VehicleFilters['sortPrice'])}
           >
-            <option value="none">Padrao</option>
+            <option value="none">Padrão</option>
             <option value="asc">Menor para maior</option>
             <option value="desc">Maior para menor</option>
           </select>
         </label>
+
+        <button className="btn btn-ghost" type="button" onClick={onClear} style={{ marginTop: '0.5rem' }}>
+          Limpar todos os filtros
+        </button>
       </div>
     </section>
   );
