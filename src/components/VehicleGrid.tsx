@@ -3,9 +3,11 @@ import { VehicleCard } from './VehicleCard';
 
 interface VehicleGridProps {
   vehicles: Veiculo[];
+  onUpdate?: (vehicle: Veiculo) => void;
+  onDelete?: (id: string) => void;
 }
 
-export function VehicleGrid({ vehicles }: VehicleGridProps) {
+export function VehicleGrid({ vehicles, onUpdate, onDelete }: VehicleGridProps) {
   if (vehicles.length === 0) {
     return (
       <div className="empty-state">
@@ -18,7 +20,7 @@ export function VehicleGrid({ vehicles }: VehicleGridProps) {
   return (
     <section className="vehicle-grid">
       {vehicles.map((vehicle) => (
-        <VehicleCard key={vehicle.id} vehicle={vehicle} />
+        <VehicleCard key={vehicle.id} vehicle={vehicle} onUpdate={onUpdate} onDelete={onDelete} />
       ))}
     </section>
   );

@@ -1,10 +1,12 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useMemo, useState, useEffect, type FormEvent } from 'react';
 import type { FuelType, NewVehicleInput, TransmissionType, VehicleType } from '../types/vehicle';
+import { Veiculo } from '../models/Veiculo';
 
 interface AddVehicleModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (vehicle: NewVehicleInput) => Promise<void>;
+  initialData?: Veiculo | null;
 }
 
 type FormValues = {
@@ -43,9 +45,34 @@ const initialValues: FormValues = {
   cambio: 'manual'
 };
 
-export function AddVehicleModal({ open, onClose, onSubmit }: AddVehicleModalProps) {
+export function AddVehicleModal({ open, onClose, onSubmit, initialData }: AddVehicleModalProps) {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (open && initialData) {
+      const dto = initialData.toDTO();
+      setValues({
+        foto: dto.foto || '',
+        marca: dto.marca || '',
+        modelo: dto.modelo || '',
+        ano: dto.ano?.toString() || '',
+        quilometragem: dto.quilometragem?.toString() || '',
+        preco: dto.preco?.toString() || '',
+        potenciaCv: dto.potenciaCv?.toString() || '',
+        autonomiaKm: dto.autonomiaKm?.toString() || '',
+        bateriaKwh: dto.bateriaKwh?.toString() || '',
+        tempoRecargaHoras: dto.tempoRecargaHoras?.toString() || '',
+        capacidadeCargaToneladas: dto.capacidadeCargaToneladas?.toString() || '',
+        eixos: dto.eixos?.toString() || '',
+        combustivel: dto.combustivel || 'flex',
+        tipo: dto.tipo || 'carro',
+        cambio: dto.cambio || 'manual'
+      });
+    } else if (open && !initialData) {
+      setValues(initialValues);
+    }
+  }, [open, initialData]);
 
   const isElectricType = values.tipo === 'eletrico';
 
@@ -136,7 +163,7 @@ export function AddVehicleModal({ open, onClose, onSubmit }: AddVehicleModalProp
     <div className="modal-backdrop" role="dialog" aria-modal="true">
       <div className="modal">
         <div className="modal-header">
-          <h2>Adicionar veículo</h2>
+          <h2>{initialData ? 'Editar veículo' : 'Adicionar veículo'}</h2>
           <button type="button" className="btn btn-ghost" onClick={onClose}>
             Fechar
           </button>
@@ -320,7 +347,7 @@ export function AddVehicleModal({ open, onClose, onSubmit }: AddVehicleModalProp
           </label>
 
           <button type="submit" className="btn btn-primary" disabled={!isFormValid || submitting}>
-            {submitting ? 'Salvando...' : 'Salvar veículo'}
+            {submitting ? 'Salvando...' : (initialData ? 'Atualizar veículo' : 'Salvar veículo')}
           </button>
         </form>
       </div>

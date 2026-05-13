@@ -194,6 +194,27 @@ class VehicleRepository {
     return this.createInstance(created);
   }
 
+  async update(id: string, input: Partial<NewVehicleInput>) {
+    this.ensureSeedData();
+    const data = this.readStorage();
+    const index = data.findIndex(v => v.id === id);
+    if (index === -1) throw new Error('Vehicle not found');
+
+    data[index] = { ...data[index], ...input };
+    this.writeStorage(data);
+    this.notify();
+    await wait(140);
+  }
+
+  async remove(id: string) {
+    this.ensureSeedData();
+    let data = this.readStorage();
+    data = data.filter(v => v.id !== id);
+    this.writeStorage(data);
+    this.notify();
+    await wait(140);
+  }
+
   subscribe(listener: () => void): () => void {
     const handler = () => listener();
     this.eventTarget.addEventListener(this.changeEvent, handler);

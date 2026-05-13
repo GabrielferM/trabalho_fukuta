@@ -6,16 +6,42 @@ import { AddVehicleModal } from '../components/Veiculo-formulario';
 import { useVehicles } from '../hooks/useVehicles';
 import { useVehicleFilters } from '../hooks/useVehicleFilters';
 import { getBrandOptions, getYearOptions } from '../utils/vehicleOptions';
+import { Veiculo } from '../models/Veiculo';
 import '../styles/catalog.css';
 
 export function CatalogPage() {
-  const { vehicles, loading, error, addVehicle } = useVehicles();
+  const { vehicles, loading, error, addVehicle, updateVehicle, removeVehicle } = useVehicles();
   const { filters, filteredVehicles, updateFilter, clearFilters } = useVehicleFilters(vehicles);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [editingVehicle, setEditingVehicle] = useState<Veiculo | null>(null);
   const [isFilterOpen, setFilterOpen] = useState(false);
 
   const brands = useMemo(() => getBrandOptions(vehicles), [vehicles]);
   const years = useMemo(() => getYearOptions(vehicles), [vehicles]);
+
+  const handleEdit = (vehicle: Veiculo) => {
+    setEditingVehicle(vehicle);
+    setModalOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Tem certeza que deseja excluir este veículo?')) {
+      await removeVehicle(id);
+    }
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setEditingVehicle(null);
+  };
+
+  const handleModalSubmit = async (input: any) => {
+    if (editingVehicle) {
+      await updateVehicle(editingVehicle.id, input);
+    } else {
+      await addVehicle(input);
+    }
+  };
 
   return (
     <main className="catalog-page">
@@ -43,15 +69,15 @@ export function CatalogPage() {
           <AppHeader 
             total={vehicles.length} 
             filtered={filteredVehicles.length} 
-            onAdd={() => setModalOpen(true)} 
+            onAdd={() => { setEditingVehicle(null); setModalOpen(true); }} 
           />
 
           {error && <p className="feedback feedback-error">{error}</p>}
-          {loading ? <p className="feedback">Carregando catálogo...</p> : <VehicleGrid vehicles={filteredVehicles} />}
+          {loading ? <p className="feedback">Carregando catálogo...</p> : <VehicleGrid vehicles={filteredVehicles} onUpdate={handleEdit} onDelete={handleDelete} />}
         </div>
       </div>
 
-      <AddVehicleModal open={isModalOpen} onClose={() => setModalOpen(false)} onSubmit={addVehicle} />
+      <AddVehicleModal open={isModalOpen} onClose={handleModalClose} onSubmit={handleModalSubmit} initialData={editingVehicle} />
     </main>
   );
 }

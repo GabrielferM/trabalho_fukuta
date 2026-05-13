@@ -10,14 +10,20 @@ import {
 
 interface VehicleCardProps {
   vehicle: Veiculo;
+  onUpdate?: (vehicle: Veiculo) => void;
+  onDelete?: (id: string) => void;
 }
 
-export function VehicleCard({ vehicle }: VehicleCardProps) {
+export function VehicleCard({ vehicle, onUpdate, onDelete }: VehicleCardProps) {
   return (
     <article className={`vehicle-card ${vehicle.getCardAccentClass()}`}>
       <div className="vehicle-image-wrap">
         <img src={vehicle.foto} alt={vehicle.getNomeCompleto()} className="vehicle-image" loading="lazy" />
         <span className="type-badge">{vehicle.getBadgeTipo()}</span>
+        <div className="vehicle-card-actions">
+          <button className="btn btn-primary btn-sm" onClick={() => onUpdate?.(vehicle)}>Atualizar</button>
+          <button className="btn btn-danger btn-sm" onClick={() => onDelete?.(vehicle.id)}>Excluir</button>
+        </div>
       </div>
 
       <div className="vehicle-body">
