@@ -19,7 +19,7 @@ export function FilterPanel({ filters, brands, years, onChange, onClear }: Filte
       <div className="panel-header">
         <h2>Filtros avançados</h2>
         <button className="btn btn-ghost" type="button" onClick={onClear}>
-          Limpar filtros
+          Limpar filtro
         </button>
       </div>
 
@@ -131,9 +131,6 @@ export function FilterPanel({ filters, brands, years, onChange, onClear }: Filte
           </select>
         </label>
 
-        <button className="btn btn-ghost" type="button" onClick={onClear} style={{ marginTop: '0.5rem' }}>
-          Limpar todos os filtros
-        </button>
       </div>
     </section>
   );
