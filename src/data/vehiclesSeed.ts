@@ -54,7 +54,7 @@ export const vehiclesSeed: VehicleDTO[] = [
     potenciaCv: 213,
     autonomiaKm: 940,
     combustivel: 'diesel',
-    tipo: 'caminhonete',
+    tipo: 'carro',
     cambio: 'automatico'
   },
   {
@@ -168,7 +168,7 @@ export const vehiclesSeed: VehicleDTO[] = [
     potenciaCv: 204,
     autonomiaKm: 980,
     combustivel: 'diesel',
-    tipo: 'caminhonete',
+    tipo: 'carro',
     cambio: 'automatico'
   },
   {
@@ -182,7 +182,7 @@ export const vehiclesSeed: VehicleDTO[] = [
     potenciaCv: 200,
     autonomiaKm: 920,
     combustivel: 'diesel',
-    tipo: 'caminhonete',
+    tipo: 'carro',
     cambio: 'automatico'
   },
   {

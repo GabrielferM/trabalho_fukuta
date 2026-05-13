@@ -6,8 +6,7 @@ import { Caminhao } from '../models/Caminhao';
 import { Eletrico } from '../models/Eletrico';
 import { vehiclesSeed } from '../data/vehiclesSeed';
 
-const STORAGE_KEY = 'trabalho_fukuta_vehicles_v2';
-const LEGACY_STORAGE_KEY = 'trabalho_fukuta_vehicles_v1';
+const STORAGE_KEY = 'trabalho_fukuta_vehicles';
 
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -137,28 +136,17 @@ class VehicleRepository {
   }
 
   private ensureSeedData(): void {
-    const existing = this.readStorage(STORAGE_KEY);
+    const existing = this.readStorage();
     if (existing.length === 0) {
-      const legacy = this.readStorage(LEGACY_STORAGE_KEY);
-      if (legacy.length > 0) {
-        this.writeStorage(legacy, STORAGE_KEY);
-        localStorage.removeItem(LEGACY_STORAGE_KEY);
-        return;
-      }
-
-      this.writeStorage(vehiclesSeed, STORAGE_KEY);
-      return;
+      this.writeStorage(vehiclesSeed);
     }
-
-    // Regrava dados normalizados no schema mais atual
-    this.writeStorage(existing, STORAGE_KEY);
   }
 
   private createInstance(data: VehicleDTO): Veiculo {
     switch (data.tipo) {
       case 'carro':
-        // PONTO DE APRESENTAÇÃO: Aqui demonstramos a INSTANCIAÇÃO DE OBJETOS usando a palavra reservada 'new'.
-        // Estamos criando um OBJETO real em memória a partir da nossa classe 'Carro'.
+
+        // INSTANCIAÇÃO DE OBJETOS / OBJETOS
         return new Carro(data);
       case 'moto':
         return new Moto(data);
